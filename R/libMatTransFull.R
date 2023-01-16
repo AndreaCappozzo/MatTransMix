@@ -1,4 +1,4 @@
-options(show.error.messages = FALSE)
+# options(show.error.messages = FALSE)
 eucl.dist <- function(X, Y){
 
 	sqrt(sum(X - Y)^2)
@@ -12,7 +12,7 @@ Trans.bic <- function(logl, n, M){
 # EM algorithm
 MatTrans.init <- function(Y, K, n.start = 10, scale = 1){
 
-	Y <- Y/scale	
+	Y <- Y/scale
 	A <- dim(Y)
 	p <- A[1]
 	T <- A[2]
@@ -25,17 +25,17 @@ MatTrans.init <- function(Y, K, n.start = 10, scale = 1){
 
 	init <- list()
 	i <- 0
-	
+
 	Psi.inv <- array(NA, c(T, T, K))
 	Sigma.inv <- array(NA, c(p, p, K))
 	detPsi <- rep(NA, K)
 	detS <- rep(NA, K)
 
-	
+
 	repeat{
 
 		s <- sample(1:n,K)
-		
+
 		mat.Y <- t(apply(Y, 3, as.matrix))
 
 		iif_1 <- 0
@@ -80,15 +80,15 @@ MatTrans.init <- function(Y, K, n.start = 10, scale = 1){
 			if((p>1) && (T>1)){
 				iif3 <- 1
 			}
-			
+
 			iif4 <- 0
-			
+
 			if((p==1) && (T>1)){iif4 <- 1}
-			
-			
+
+
 			B <- NULL
 			C <- NULL
-		
+
 			if(iif3 == 1){
 				var.est <- apply(Y[,,index], 2, as.matrix, byrow = TRUE)
 				var.est <- var(var.est)
@@ -117,18 +117,18 @@ MatTrans.init <- function(Y, K, n.start = 10, scale = 1){
 				detS[k] <- 1/det(Sigma.inv[,,k])
 
 			}
-			
+
 			if(inherits(C, "try-error")){
-				
+
 				iif <- 1
-			}	
+			}
 			if(inherits(B, "try-error")){
-				
+
 				iif <- 1
 			}
 		}
 		if(iif == 0){
-			W.result$y <- as.vector(Y)				
+			W.result$y <- as.vector(Y)
 			W.result$gamma1 <- PI
 			W.result$invS1 <- Sigma.inv
 			W.result$tau <- rep(0, K)
@@ -136,10 +136,10 @@ MatTrans.init <- function(Y, K, n.start = 10, scale = 1){
 			W.result$invPsi1 <- Psi.inv
 			W.result$detS <- detS
 			W.result$detPsi <- detPsi
-			W.result$scale <- scale				
-	
+			W.result$scale <- scale
+
 			i <- i + 1
-			init[[i]] <- W.result	
+			init[[i]] <- W.result
 
 		}
 		if (i == n.start) break
@@ -155,9 +155,9 @@ code.convert <- function(code){
   Mu <- substr(code,1,1)
   Sigma <- substr(code,3,5)
   Psi <- substr(code,7,8)
-  
+
   Mu.num <- ifelse(Mu == "A", 1,
-	   ifelse(Mu == "G", 2, 
+	   ifelse(Mu == "G", 2,
 	   ifelse(Mu == "X", 0, -1)))
 
   Sigma.num <- ifelse(Sigma == "EII", 1,
@@ -175,17 +175,17 @@ code.convert <- function(code){
                ifelse(Sigma == "EVV", 13,
                ifelse(Sigma == "VVV", 14,
  	       ifelse(Sigma == "XXX", 0, -1)))))))))))))))
-  
+
   Psi.num <- ifelse(Psi == "II", 1,
              ifelse(Psi == "EI", 2,
              ifelse(Psi == "VI", 3,
              ifelse(Psi == "EE", 4,
              ifelse(Psi == "VE", 5,
              ifelse(Psi == "EV", 6,
-             ifelse(Psi == "VV", 7,              
-	     ifelse(Psi == "AR", 8, 
+             ifelse(Psi == "VV", 7,
+	     ifelse(Psi == "AR", 8,
 	     ifelse(Psi == "XX", 0, -1)))))))))
-  
+
   list(Mu = Mu, Sigma = Sigma, Psi = Psi, Mu.num = Mu.num, Sigma.num = Sigma.num, Psi.num = Psi.num)
 }
 
@@ -196,35 +196,35 @@ code.back <- function(num){
   Mu.num <- num[1]
   Sigma.num <- num[2]
   Psi.num <- num[3]
- 
+
   Mu <- ifelse(Mu.num == 1, "A",
 	ifelse(Mu.num == 2, "G", NULL))
-	
- 
+
+
   Sigma <- ifelse(Sigma.num == 1, "EII",
-           ifelse(Sigma.num == 2, "VII", 
-           ifelse(Sigma.num == 3, "EEI", 
-           ifelse(Sigma.num == 4, "VEI", 
-           ifelse(Sigma.num == 5, "EVI", 
-           ifelse(Sigma.num == 6, "VVI", 
-           ifelse(Sigma.num == 7, "EEE", 
-           ifelse(Sigma.num == 8, "VEE", 
-           ifelse(Sigma.num == 9, "EVE", 
-           ifelse(Sigma.num == 10, "VVE", 
-           ifelse(Sigma.num == 11, "EEV", 
-           ifelse(Sigma.num == 12, "VEV", 
-           ifelse(Sigma.num == 13, "EVV", 
+           ifelse(Sigma.num == 2, "VII",
+           ifelse(Sigma.num == 3, "EEI",
+           ifelse(Sigma.num == 4, "VEI",
+           ifelse(Sigma.num == 5, "EVI",
+           ifelse(Sigma.num == 6, "VVI",
+           ifelse(Sigma.num == 7, "EEE",
+           ifelse(Sigma.num == 8, "VEE",
+           ifelse(Sigma.num == 9, "EVE",
+           ifelse(Sigma.num == 10, "VVE",
+           ifelse(Sigma.num == 11, "EEV",
+           ifelse(Sigma.num == 12, "VEV",
+           ifelse(Sigma.num == 13, "EVV",
            ifelse(Sigma.num == 14, "VVV", NULL))))))))))))))
-  
-  Psi <- ifelse(Psi.num == 1, "II", 
-         ifelse(Psi.num == 2, "EI", 
-         ifelse(Psi.num == 3, "VI", 
-         ifelse(Psi.num == 4, "EE", 
-         ifelse(Psi.num == 5, "VE", 
-         ifelse(Psi.num == 6, "EV", 
-         ifelse(Psi.num == 7, "VV", 
+
+  Psi <- ifelse(Psi.num == 1, "II",
+         ifelse(Psi.num == 2, "EI",
+         ifelse(Psi.num == 3, "VI",
+         ifelse(Psi.num == 4, "EE",
+         ifelse(Psi.num == 5, "VE",
+         ifelse(Psi.num == 6, "EV",
+         ifelse(Psi.num == 7, "VV",
          ifelse(Psi.num == 8, "AR", NULL))))))))
-  
+
   list(Mu = Mu, Sigma = Sigma, Psi = Psi, Mu.num = Mu.num, Sigma.num = Sigma.num, Psi.num = Psi.num)
 }
 
@@ -238,14 +238,14 @@ MatTrans.EM.orig <- function(Y, initial = NULL, la = NULL, nu = NULL, model = NU
 	p <- A[1]
 	T <- A[2]
 	n <- A[3]
-	
+
 
 	if(n < 1) stop("Wrong number of observations n...\n")
 	if(p < 1) stop("Wrong dimensionality p...\n")
 	if(T < 1) stop("Wrong dimensionality T...\n")
 
 	if(!is.null(initial)){
-		
+
 		if(length(initial) < 1) stop("Wrong initialization...\n")
 
 		K <- length(initial[[1]]$tau)
@@ -319,7 +319,7 @@ MatTrans.EM.orig <- function(Y, initial = NULL, la = NULL, nu = NULL, model = NU
 					for(Psi.type in 1:8){
 																	iter <- iter + 1
 						Model[iter] <- paste(code.back(c(Mu.type, Sigma.type, Psi.type))$Mu, "-", code.back(c(Mu.type, Sigma.type, Psi.type))$Sigma, "-", code.back(c(Mu.type, Sigma.type, Psi.type))$Psi, sep="")
-								
+
 						index[,iter] <- c(Mu.type, Sigma.type, Psi.type)
 					}
 				}
@@ -327,21 +327,21 @@ MatTrans.EM.orig <- function(Y, initial = NULL, la = NULL, nu = NULL, model = NU
 		}
 
 		else{
-			
+
 			index <- NULL
 			Model <- NULL
 
 
 
 			for(ij in 1:length(model)){
-				
+
 				code1 <- code.convert(model[ij])$Mu.num
 				code2 <- code.convert(model[ij])$Sigma.num
 				code3<- code.convert(model[ij])$Psi.num
-			
+
 				#cat(code3,"\n")
 				index.temp <- c(code1, code2, code3)
-				
+
 				#cat(index.temp, "\n")
 
  				if(any(index.temp == -1)){
@@ -359,12 +359,12 @@ MatTrans.EM.orig <- function(Y, initial = NULL, la = NULL, nu = NULL, model = NU
 						code3 <- seq(1,8)
 					}
 
-					
+
 					index.temp <- t(expand.grid(x = code1, y = code2, z = code3))
 					for(ij2 in 1:dim(index.temp)[2]){
 						Model <- c(Model, paste(code.back(index.temp[,ij2])$Mu, "-", code.back(index.temp[,ij2])$Sigma, "-", code.back(index.temp[,ij2])$Psi, sep=""))
 					}
-						
+
 
 				}
 				else{
@@ -377,15 +377,15 @@ MatTrans.EM.orig <- function(Y, initial = NULL, la = NULL, nu = NULL, model = NU
 
 			}
 
-			
+
 		}
 
 
 
 		loglik <- rep(-Inf, dim(index)[2])
-		bic <- rep(Inf, dim(index)[2]) 
+		bic <- rep(Inf, dim(index)[2])
 
-				
+
 		if(trans == "Power"){
 			trans.type <- 1
 			cat("Power transformation \n")
@@ -412,13 +412,13 @@ MatTrans.EM.orig <- function(Y, initial = NULL, la = NULL, nu = NULL, model = NU
 			trans.type <- 0
 			cat("None -- no transformation \n")
 			if(row.skew || col.skew){
-				cat("trans method is set to 'None' -- row.skew and col.skew are set to FALSE \n") 
+				cat("trans method is set to 'None' -- row.skew and col.skew are set to FALSE \n")
 			}
 			if(initial[[1]]$scale != 1){
 				cat("Models are fitted to the scaled data. Log-likelihood and BIC values are scaled back. \n" )
 			}
 
-			
+
 		}
 
 		result <- list()
@@ -429,7 +429,7 @@ MatTrans.EM.orig <- function(Y, initial = NULL, la = NULL, nu = NULL, model = NU
 			if(silent != TRUE){
 				cat("Initialization", i, "\n")
 			}
-	
+
 			ll <- rep(0, 3)
 			misc_double <- c(tol, 0.0, 0.0)
 			conv <- rep(0, 3)
@@ -439,20 +439,20 @@ MatTrans.EM.orig <- function(Y, initial = NULL, la = NULL, nu = NULL, model = NU
 
 			for(iter in 1:dim(index)[2]){
 
-				
+
 				if(trans == "Power"){
 					trans.type <- 1
-					
+
 				}
 				else if(trans == "Manly"){
 
 					trans.type <- 2
-					
+
 
 				}
 				else if(trans == "None"){
 					trans.type <- 0
-					
+
 				}
 
 				#cat("trans.type", trans.type, "\n")
@@ -461,21 +461,21 @@ MatTrans.EM.orig <- function(Y, initial = NULL, la = NULL, nu = NULL, model = NU
 				#cat(la, "la", "\n")
 
 				try0 <- try(temp <- .C("run_Mat_Trans_Full", y = as.double(initial[[i]]$y), misc_int = as.integer(misc_int), misc_double = as.double(misc_double), tau = as.double(initial[[i]]$tau), la1 = as.double(as.vector(la)), nu1 = as.double(as.vector(nu)), Mu1 = as.double(initial[[i]]$Mu1), invS1 = as.double(initial[[i]]$invS1), invPsi1 = as.double(initial[[i]]$invPsi1), detS = as.double(initial[[i]]$detS), detPsi = as.double(initial[[i]]$detPsi), gamma1 = as.double(initial[[i]]$gamma1), id = as.integer(id), ll = as.double(ll), conv = as.integer(conv), scale = as.double(initial[[i]]$scale), PACKAGE = "MatTransMix"), silent = TRUE)
-				
-					 
+
+
 
 				try1 <- try(invS <- array(temp$invS1, dim = c(p, p, K)))
 				try2 <- try(invPsi <- array(temp$invPsi1, dim = c(T, T, K)))
-				
+
 				try3 <- try(Sigma <- array(apply(invS, 3, solve), dim = c(p,p,K)))
 				try4 <- try(Psi <- array(apply(invPsi, 3, solve), dim = c(T,T,K)))
 
 				iif_0 <- 0
-		
-				if(inherits(try0, "try-error")){	
+
+				if(inherits(try0, "try-error")){
 					iif_0 <- 1
 				}
-		
+
 				if(inherits(try1, "try-error")){
 					iif_0 <- 1
 				}
@@ -488,7 +488,7 @@ MatTrans.EM.orig <- function(Y, initial = NULL, la = NULL, nu = NULL, model = NU
 					if(silent != TRUE){
 																	cat("Model", Model[iter], "BIC", temp$ll[2],"\n")
 																											}
-					if(!is.na(temp$ll[1])){	
+					if(!is.na(temp$ll[1])){
 					if(temp$ll[1] > loglik[iter]){
 					if((!inherits(try3, "try-error")) && (!inherits(try4, "try-error"))){
 						if(check == TRUE){
@@ -498,8 +498,8 @@ MatTrans.EM.orig <- function(Y, initial = NULL, la = NULL, nu = NULL, model = NU
 							if(check1 && check2 && check3){
 
 								loglik[iter] <- temp$ll[1]
-								bic[iter] <- temp$ll[2]				
-								r <- NULL	
+								bic[iter] <- temp$ll[2]
+								r <- NULL
 								r$tau <- temp$tau
 								if(trans.type != 0){
 									r$la <- matrix(temp$la1, nrow = K)
@@ -513,7 +513,7 @@ MatTrans.EM.orig <- function(Y, initial = NULL, la = NULL, nu = NULL, model = NU
 									}
 									}
 								}
-						
+
 								else{
 									r$la <- NA
 									r$nu <- NA
@@ -533,16 +533,16 @@ MatTrans.EM.orig <- function(Y, initial = NULL, la = NULL, nu = NULL, model = NU
 								r$flag <- temp$conv[2]
 								r$ll <- temp$ll[1]
 								r$bic <- temp$ll[2]
-							
+
 								result[[iter]] <- r
 							}
 						}
 						else{
-							loglik[iter] <- temp$ll[1]	
+							loglik[iter] <- temp$ll[1]
 							bic[iter] <- temp$ll[2]
-											
+
 							r <- NULL
-						
+
 							r$tau <- temp$tau
 							if(trans.type != 0){
 								r$la <- matrix(temp$la1, nrow = K)
@@ -575,50 +575,50 @@ MatTrans.EM.orig <- function(Y, initial = NULL, la = NULL, nu = NULL, model = NU
 							r$flag <- temp$conv[2]
 							r$ll <- temp$ll[1]
 							r$bic <- temp$ll[2]
-							
+
 							result[[iter]] <- r
 
 
 						}
-											
+
 						if(trans.type == 2){
 
 							adj <- cdf.adjust(K, r$Mu, r$Sigma, r$Psi, r$la, r$nu)
 
-							
+
 							ll.new <- 0
 
 							for(obs in 1:n){
 								dens <- 0
 								for(k in 1:K){
 									dens <- dens + r$tau[k] * manly.dens(as.matrix(Y[,,obs], p, T), r$Mu[,,k], r$detS[k], r$detPsi[k], invS[,,k], invPsi[,,k], r$LA[,,k]) /adj[k]
-									
+
 								}
 								ll.new <- ll.new + log(dens)
 							}
 
-							
+
 							result[[iter]]$ll <- ll.new
 							M <- (r$bic + 2*r$ll) / log(n)
 							result[[iter]]$bic <- M *log(n) -2 *result[[iter]]$ll
 
-							loglik[iter] <- ll.new	
-							bic[iter] <- result[[iter]]$bic					
+							loglik[iter] <- ll.new
+							bic[iter] <- result[[iter]]$bic
 						}
 
 
-						
-					}	
+
 					}
 					}
-					
+					}
+
 
 				}
 
 			}
 
 
-		}				
+		}
 
 
 		find.min <- which.min(bic)
@@ -628,11 +628,11 @@ MatTrans.EM.orig <- function(Y, initial = NULL, la = NULL, nu = NULL, model = NU
 		best.bic <- bic[find.min]
 
 
-		
+
 		ret <- list(scale = initial[[1]]$scale, result = result, model = Model, loglik = loglik, bic = bic, best.result = best.result, best.model = best.model, best.loglik = best.loglik, best.bic = best.bic, trans = trans)
-	
+
 		class(ret) <- "MatTransMix"
-	
+
 
 		return(ret)
 
@@ -652,7 +652,7 @@ MatTrans.EM <- function(Y, initial = NULL, la = NULL, nu = NULL, model = NULL, t
 
 	if(is.null(short.iter)){
 
-		ret <- MatTrans.EM.orig(Y, initial = initial, la = la, nu = nu, model = model, trans = trans, la.type = la.type, row.skew = row.skew, col.skew = col.skew, tol = tol, max.iter = long.iter, size.control = size.control, silent = silent, check = TRUE)	
+		ret <- MatTrans.EM.orig(Y, initial = initial, la = la, nu = nu, model = model, trans = trans, la.type = la.type, row.skew = row.skew, col.skew = col.skew, tol = tol, max.iter = long.iter, size.control = size.control, silent = silent, check = TRUE)
 		class(ret) <- "MatTransMix"
 
 	}
@@ -660,18 +660,20 @@ MatTrans.EM <- function(Y, initial = NULL, la = NULL, nu = NULL, model = NULL, t
 		cat("Short EM has been started", "\n")
 
 		shortEM <- MatTrans.EM.orig(Y, initial = initial, la = la, nu = nu, model = model, trans = trans, la.type = la.type, row.skew = row.skew, col.skew = col.skew, tol = tol, max.iter = short.iter, size.control = size.control, silent = silent, check = FALSE)
-
+# Andrea's workaround to tentatively fix the bug that appears when a model fails to converge (i.e., bic==Inf)
+		ind_valid_bic <- which(!is.infinite(shortEM$bic))
+		shortEM$model <- shortEM$model[ind_valid_bic]
 
 		cat("Long EM has been started", "\n")
 
 		if(!all.models){
 
 			cat("For the best model:", shortEM$best.model, "\n")
-			
+
 			init <- list()
 
 			W.result <- NULL
-			W.result$y <- initial[[1]]$y				
+			W.result$y <- initial[[1]]$y
 			W.result$gamma1 <- shortEM$best.result[[1]]$gamma
 			W.result$invS1 <- apply(shortEM$best.result[[1]]$Sigma, 3, solve)
 			W.result$tau <-  shortEM$best.result[[1]]$tau
@@ -680,9 +682,9 @@ MatTrans.EM <- function(Y, initial = NULL, la = NULL, nu = NULL, model = NULL, t
 			W.result$detS <- shortEM$best.result[[1]]$detS
 			W.result$detPsi <- shortEM$best.result[[1]]$detPsi
 			W.result$scale <- shortEM$scale
-	
-			init[[1]] <- W.result	
-		
+
+			init[[1]] <- W.result
+
 			if(trans != "None"){
 
 				longEM <- MatTrans.EM.orig(Y, initial = init, la = shortEM$best.result[[1]]$la, nu = shortEM$best.result[[1]]$nu, model = shortEM$best.model, trans = shortEM$trans, la.type = la.type, row.skew = row.skew, col.skew = col.skew, tol = tol, max.iter = long.iter, size.control = size.control, silent = silent, check = TRUE)
@@ -693,7 +695,7 @@ MatTrans.EM <- function(Y, initial = NULL, la = NULL, nu = NULL, model = NULL, t
 
 			}
 			ret <- longEM
-	
+
 			class(ret) <- "MatTransMix"
 		}
 		else{
@@ -710,7 +712,7 @@ MatTrans.EM <- function(Y, initial = NULL, la = NULL, nu = NULL, model = NULL, t
 
 
 			loglik <- rep(-Inf, length(shortEM$model))
-			bic <- rep(Inf, length(shortEM$model)) 
+			bic <- rep(Inf, length(shortEM$model))
 
 
 			for(i in 1:length(shortEM$model)){
@@ -718,7 +720,7 @@ MatTrans.EM <- function(Y, initial = NULL, la = NULL, nu = NULL, model = NULL, t
 				init <- list()
 
 				W.result <- NULL
-				W.result$y <- initial[[1]]$y				
+				W.result$y <- initial[[1]]$y
 				W.result$gamma1 <- shortEM$result[[i]]$gamma
 				W.result$invS1 <- apply(shortEM$result[[i]]$Sigma, 3, solve)
 				W.result$tau <-  shortEM$result[[i]]$tau
@@ -726,15 +728,15 @@ MatTrans.EM <- function(Y, initial = NULL, la = NULL, nu = NULL, model = NULL, t
 				W.result$invPsi1 <- apply(shortEM$result[[i]]$Psi, 3, solve)
 				W.result$detS <- shortEM$result[[i]]$detS
 				W.result$detPsi <- shortEM$result[[i]]$detPsi
-				W.result$scale <- shortEM$scale				
-	
+				W.result$scale <- shortEM$scale
+
 				#cat(W.result$gamma1, "\n")
-				init[[1]] <- W.result	
-				
+				init[[1]] <- W.result
+
 				if(trans != "None"){
 
 					try0 <- try(longEM$result[[i]] <- MatTrans.EM.orig(Y, initial = init, la = shortEM$result[[i]]$la, nu = shortEM$result[[i]]$nu, model = shortEM$model[i], trans = shortEM$trans, la.type = la.type, row.skew = row.skew, col.skew = col.skew, tol = tol, max.iter = long.iter, size.control = size.control, silent = silent, check = TRUE)$result[[1]])
-					
+
 
 				}
 				else{
@@ -795,7 +797,7 @@ manly.dens <- function(X, Mu, detS, detPsi, invS, invPsi, LA){
 
 	maha <- invS %*% (y - Mu) %*% invPsi %*% t(y - Mu)
 
-	trace <- sum(diag(maha))		
+	trace <- sum(diag(maha))
 
 	res <- 1.0 / (2*pi)^(p*T/2) / detS^(T/2) / detPsi^(p/2) * exp(-1.0 / 2.0 * trace) * exp(sum(LA * X));
 
