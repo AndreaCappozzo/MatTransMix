@@ -1,7 +1,7 @@
 ########################
 #### EMdemoIris #######
 ########################
-options(show.error.messages = FALSE)
+# options(show.error.messages = FALSE)
 
 set.seed(123)
 data(iris)
@@ -14,7 +14,7 @@ for(i in 1:n){
   X[,,i] <- data[i,]
 }
 init <- MatTrans.init(X, K = 3, n.start = 10)
-V <- MatTrans.EM(X, initial = init,                        
+V <- MatTrans.EM(X, initial = init,
                            trans = "None", silent = TRUE)
 V$best.bic
 V$best.model

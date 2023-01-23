@@ -1,7 +1,7 @@
 ########################
 #### EMdemoIris #######
 ########################
-options(show.error.messages = FALSE)
+# options(show.error.messages = FALSE)
 
 set.seed(123)
 data(iris)
@@ -20,7 +20,7 @@ for(i in 1:n){
 
 init <- MatTrans.init(X1, K = 3, n.start = 10)
 
-M <- MatTrans.EM(X1, initial = init, 
+M <- MatTrans.EM(X1, initial = init,
                      row.skew = TRUE, col.skew = TRUE,
                      trans = "None", silent = TRUE, size.control = 3)
 
@@ -30,5 +30,5 @@ M$best.model
 
 table(M$best.result[[1]]$id, iris[,5])
 
-MatTrans.plot(X1, M, rownames = c("Sepal", "Petal"), 
+MatTrans.plot(X1, M, rownames = c("Sepal", "Petal"),
     colnames = c("Length", "Width"))
